@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { env } from "../config/index.js";
 
 const userSchema = new Schema(
   {
@@ -37,13 +38,9 @@ userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-const { ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIREY } = process.env;
-
 userSchema.methods.accessToken = function () {
-  if (!ACCESS_TOKEN_SECRET) throw new Error("Missing ACCESS_TOKEN_SECRET");
-
-  return jwt.sign({ _id: this._id, name: this.name }, ACCESS_TOKEN_SECRET, {
-    expiresIn: ACCESS_TOKEN_EXPIREY || "1m",
+  return jwt.sign({ _id: this._id, name: this.name }, env.ACCESS_TOKEN_SECRET, {
+    expiresIn: env.ACCESS_TOKEN_EXPIREY || "1m",
   });
 };
 

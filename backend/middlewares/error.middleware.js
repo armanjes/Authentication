@@ -1,3 +1,5 @@
+import {env} from "../config/index.js"
+
 export default function errorMiddleware(err, req, res, next) {
   const isOperational = err.isOperational === true;
   const status = isOperational ? err.statusCode : 500;
@@ -5,7 +7,7 @@ export default function errorMiddleware(err, req, res, next) {
 
   const response = { ok: false, message };
 
-  if (process.env.NODE_ENV === "development") {
+  if (env.NODE_ENV === "development") {
     response.stack = err.stack;
   }
 

@@ -2,18 +2,18 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { asyncHandler, ApiError } from "../utils/index.js";
 import userModel from "../models/user.model.js";
+import {env} from "../config/index.js"
 
 const protect = asyncHandler(async function (req, res, next) {
-  const token = req.cookies?.token;
+  const accessToken = req.cookies?.accessToken;
 
-  if (!token) {
+  if (!accessToken) {
     throw new ApiError(401, "Not authorized, no token.");
   }
 
   let decode;
   try {
-    decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log("authMiddleware :: token decode :: ", decode);
+    decode = jwt.verify(accessToken, env.ACCESS_TOKEN_SECRET);
   } catch (error) {
     throw new ApiError(401, "Token expired or invalid.");
   }
